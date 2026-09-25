@@ -24,13 +24,6 @@ body {
 }
 body {
   background-color: var(--bg);
-  background-image:
-    radial-gradient(ellipse at 12% 0%, rgba(0, 112, 209, 0.32) 0%, rgba(0, 112, 209, 0) 55%),
-    radial-gradient(ellipse at 92% 100%, rgba(16, 124, 16, 0.3) 0%, rgba(16, 124, 16, 0) 55%),
-    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
-  background-size: 100% 100%, 100% 100%, 48px 48px, 48px 48px;
-  background-attachment: fixed;
   color: var(--text);
   font: 17px/1.5 "Segoe UI", "SST", "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
