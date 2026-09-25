@@ -5,272 +5,199 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Cabreira Store · Desbloqueio</title>
     <link rel="stylesheet" href="cabreira.css" />
+    <link rel="stylesheet" href="layout-v2.css" />
     <style>
       /* jb.js controla o estado pela classe do body:
          (nenhuma) = rodando, "done" = sucesso, "fail" = falhou, "log" = ?log=1 */
-      .stage {
-        display: none;
+      #brand { display: none; }
+      body.log #brand { display: -webkit-flex; display: flex; }
+      .scene { display: none; }
+      body:not(.done):not(.fail):not(.log) #run { display: -webkit-flex; display: flex; }
+      body.done #ok, body.fail #err { display: -webkit-flex; display: flex; }
+      h1 { margin: 0; font-weight: 800; letter-spacing: -0.01em; line-height: 1.1; }
+
+      /* ================= RODANDO: so logo + barra ================= */
+      #run {
         -webkit-flex-direction: column;
         flex-direction: column;
         -webkit-align-items: center;
         align-items: center;
         -webkit-justify-content: center;
         justify-content: center;
-        text-align: center;
-        min-height: calc(100vh - 150px);
-        padding: 24px 20px 8px;
+        min-height: 100vh;
         box-sizing: border-box;
+        padding: 16px;
       }
-      body:not(.done):not(.fail):not(.log) #run,
-      body.done #ok,
-      body.fail #err {
-        display: -webkit-flex;
-        display: flex;
-      }
-      body.log .stage,
-      body.log .foot {
-        display: none;
-      }
-      h1 {
-        margin: 0;
-        font-weight: 800;
-        letter-spacing: -0.01em;
-        line-height: 1.1;
-      }
-
-      /* ================= RODANDO =================
-         Leve de proposito: o exploit esta trabalhando, entao so
-         transform/opacity, sem blur, sombra animada ou particulas. */
-      .orb {
+      .big-logo {
         position: relative;
-        width: 250px;
-        height: 250px;
-        margin-bottom: 34px;
+        width: 300px;
+        height: 300px;
+        margin-bottom: 28px;
       }
-      .orb .ring {
+      .big-logo .glow {
         position: absolute;
-        left: 0;
-        top: 0;
-        right: 0;
-        bottom: 0;
+        left: -40px; top: -40px; right: -40px; bottom: -40px;
         border-radius: 50%;
-        border: 5px solid transparent;
+        background: radial-gradient(circle, rgba(47, 143, 255, 0.34) 0%, rgba(82, 176, 67, 0.16) 48%, rgba(4, 7, 13, 0) 70%);
+        -webkit-animation: pulse 2.6s ease-in-out infinite;
+        animation: pulse 2.6s ease-in-out infinite;
       }
-      .orb .r1 {
-        border-top-color: var(--ps-glow);
-        border-right-color: var(--ps);
-        -webkit-animation: spin 1.3s linear infinite;
-        animation: spin 1.3s linear infinite;
-      }
-      .orb .r2 {
-        left: 18px;
-        top: 18px;
-        right: 18px;
-        bottom: 18px;
-        border-width: 4px;
-        border-bottom-color: var(--xb-bright);
-        border-left-color: var(--xb);
-        -webkit-animation: spin 1.9s linear infinite reverse;
-        animation: spin 1.9s linear infinite reverse;
-      }
-      .orb img {
+      .big-logo img {
         position: absolute;
-        left: 50%;
-        top: 50%;
-        width: 170px;
-        height: 170px;
-        margin: -85px 0 0 -85px;
-        -webkit-animation: breathe 2.4s ease-in-out infinite;
-        animation: breathe 2.4s ease-in-out infinite;
-      }
-      .run-title {
-        font-size: 40px;
-      }
-      .dots i {
-        font-style: normal;
-        -webkit-animation: blink 1.4s infinite both;
-        animation: blink 1.4s infinite both;
-      }
-      .dots i:nth-child(2) {
-        -webkit-animation-delay: 0.2s;
-        animation-delay: 0.2s;
-      }
-      .dots i:nth-child(3) {
-        -webkit-animation-delay: 0.4s;
-        animation-delay: 0.4s;
-      }
-      .run-sub {
-        color: var(--muted);
-        font-size: 19px;
-        margin: 14px 0 30px;
-      }
-      .run-sub b {
-        color: var(--text);
+        left: 0; top: 0;
+        width: 300px;
+        height: 300px;
+        -webkit-animation: breathe 2.6s ease-in-out infinite;
+        animation: breathe 2.6s ease-in-out infinite;
       }
       .bar {
-        width: 360px;
-        max-width: 80vw;
-        height: 6px;
-        border-radius: 6px;
+        width: 460px;
+        max-width: 78vw;
+        height: 8px;
+        border-radius: 8px;
         background: var(--line);
         overflow: hidden;
         position: relative;
       }
       .bar i {
         position: absolute;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        width: 40%;
-        border-radius: 6px;
+        left: 0; top: 0; bottom: 0;
+        width: 38%;
+        border-radius: 8px;
         background: linear-gradient(90deg, var(--ps), var(--xb-bright));
-        -webkit-animation: slide 1.6s ease-in-out infinite;
-        animation: slide 1.6s ease-in-out infinite;
+        -webkit-animation: slide 1.5s ease-in-out infinite;
+        animation: slide 1.5s ease-in-out infinite;
       }
 
-      /* ================= SUCESSO ================= */
+      /* ================= TRANSICAO: flash + logo "aterrissa" ================= */
+      .flash {
+        position: fixed;
+        left: 0; top: 0; width: 100%; height: 100%;
+        pointer-events: none;
+        z-index: 6;
+        opacity: 0;
+        -webkit-animation: flash 1.1s ease-out both;
+        animation: flash 1.1s ease-out both;
+      }
+      #ok .flash { background: radial-gradient(circle at 62% 45%, rgba(120, 255, 170, 0.75), rgba(47, 143, 255, 0.45) 45%, rgba(4, 7, 13, 0) 75%); }
+      #err .flash { background: radial-gradient(circle at 62% 45%, rgba(242, 179, 61, 0.55), rgba(4, 7, 13, 0) 70%); }
+
       .hero {
         position: relative;
-        width: 290px;
-        height: 290px;
-        margin-bottom: 22px;
+        width: 170px;
+        height: 170px;
+        margin: 0 auto 8px;
       }
-      .hero .halo,
-      .hero .burst {
+      .hero img.lg {
         position: absolute;
-        left: 0;
-        top: 0;
-        right: 0;
-        bottom: 0;
+        left: 0; top: 0;
+        width: 170px;
+        height: 170px;
+        -webkit-animation: land 1.1s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+        animation: land 1.1s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+      }
+      #ok .hero img.lg { -webkit-filter: drop-shadow(0 8px 26px rgba(0, 112, 209, 0.6)); filter: drop-shadow(0 8px 26px rgba(0, 112, 209, 0.6)); }
+      #err .hero img.lg { opacity: 0.6; -webkit-animation: land 1.1s cubic-bezier(0.2, 0.8, 0.2, 1) both, shake 0.6s 1.1s ease-in-out; animation: land 1.1s cubic-bezier(0.2, 0.8, 0.2, 1) both, shake 0.6s 1.1s ease-in-out; }
+      .hero .halo, .hero .burst {
+        position: absolute;
+        left: 0; top: 0; right: 0; bottom: 0;
         border-radius: 50%;
       }
       .hero .halo {
-        background: radial-gradient(circle, rgba(47, 143, 255, 0.35) 0%, rgba(82, 176, 67, 0.18) 45%, rgba(4, 7, 13, 0) 70%);
-        -webkit-animation: fadeIn 0.8s 0.2s both, pulse 2.8s 1s ease-in-out infinite;
-        animation: fadeIn 0.8s 0.2s both, pulse 2.8s 1s ease-in-out infinite;
-      }
-      .hero .orbit {
-        position: absolute;
-        left: 10px;
-        top: 10px;
-        right: 10px;
-        bottom: 10px;
-        border-radius: 50%;
-        border: 3px solid transparent;
-        border-top-color: var(--ps-glow);
-        border-bottom-color: var(--xb-bright);
-        -webkit-animation: fadeIn 0.6s 0.5s both, spin 5s linear infinite;
-        animation: fadeIn 0.6s 0.5s both, spin 5s linear infinite;
+        left: -30px; top: -30px; right: -30px; bottom: -30px;
+        background: radial-gradient(circle, rgba(47, 143, 255, 0.32) 0%, rgba(82, 176, 67, 0.18) 45%, rgba(4, 7, 13, 0) 70%);
+        -webkit-animation: fadeIn 0.8s 0.5s both, pulse 2.8s 1.3s ease-in-out infinite;
+        animation: fadeIn 0.8s 0.5s both, pulse 2.8s 1.3s ease-in-out infinite;
       }
       .hero .burst {
         border: 4px solid var(--ps-glow);
         opacity: 0;
-        -webkit-animation: burst 1.3s 0.15s cubic-bezier(0.1, 0.7, 0.3, 1) both;
-        animation: burst 1.3s 0.15s cubic-bezier(0.1, 0.7, 0.3, 1) both;
+        -webkit-animation: burst 1.2s 0.55s cubic-bezier(0.1, 0.7, 0.3, 1) both;
+        animation: burst 1.2s 0.55s cubic-bezier(0.1, 0.7, 0.3, 1) both;
       }
-      .hero .b2 {
-        border-color: var(--xb-bright);
-        -webkit-animation-delay: 0.4s;
-        animation-delay: 0.4s;
-      }
-      .hero-logo {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        width: 220px;
-        height: 220px;
-        margin: -110px 0 0 -110px;
-        -webkit-filter: drop-shadow(0 10px 30px rgba(0, 112, 209, 0.55));
-        filter: drop-shadow(0 10px 30px rgba(0, 112, 209, 0.55));
-        -webkit-animation: pop 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
-        animation: pop 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
-      }
+      .hero .b2 { border-color: var(--xb-bright); -webkit-animation-delay: 0.8s; animation-delay: 0.8s; }
       .check {
         position: absolute;
-        right: 14px;
-        bottom: 18px;
-        width: 72px;
-        height: 72px;
+        right: -6px; bottom: 0;
+        width: 58px; height: 58px;
         border-radius: 50%;
         background: var(--xb);
-        box-shadow: 0 0 0 6px var(--bg), 0 8px 24px rgba(82, 176, 67, 0.55);
-        -webkit-animation: pop 0.6s 0.75s cubic-bezier(0.2, 0.8, 0.2, 1) both;
-        animation: pop 0.6s 0.75s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+        box-shadow: 0 0 0 5px var(--bg), 0 6px 20px rgba(82, 176, 67, 0.55);
+        -webkit-animation: pop 0.6s 1s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+        animation: pop 0.6s 1s cubic-bezier(0.2, 0.8, 0.2, 1) both;
       }
-      .check svg {
-        width: 72px;
-        height: 72px;
-      }
+      .check svg { width: 58px; height: 58px; }
       .check path {
-        fill: none;
-        stroke: #fff;
-        stroke-width: 5.5;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-        stroke-dasharray: 40;
-        stroke-dashoffset: 40;
-        -webkit-animation: draw 0.45s 1.15s ease-out forwards;
-        animation: draw 0.45s 1.15s ease-out forwards;
+        fill: none; stroke: #fff; stroke-width: 5.5; stroke-linecap: round; stroke-linejoin: round;
+        stroke-dasharray: 40; stroke-dashoffset: 40;
+        -webkit-animation: draw 0.45s 1.4s ease-out forwards;
+        animation: draw 0.45s 1.4s ease-out forwards;
       }
+      .warnmark {
+        position: absolute;
+        right: -6px; bottom: 0;
+        width: 50px; height: 50px; line-height: 50px;
+        border-radius: 50%;
+        background: var(--amber);
+        color: #1d1400;
+        font-size: 32px; font-weight: 900;
+        box-shadow: 0 0 0 5px var(--bg);
+        -webkit-animation: pop 0.6s 1s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+        animation: pop 0.6s 1s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+      }
+
       .tag {
         display: inline-block;
-        padding: 8px 20px;
+        padding: 7px 18px;
         border-radius: 999px;
         background: rgba(16, 124, 16, 0.2);
         border: 1px solid rgba(82, 176, 67, 0.55);
         color: #9be58f;
         font-weight: 800;
-        font-size: 15px;
-        letter-spacing: 0.2em;
+        font-size: 14px;
+        letter-spacing: 0.18em;
         text-transform: uppercase;
       }
-      .big {
-        font-size: 64px;
-        margin: 16px 0 12px;
+      .tag.amber { background: rgba(242, 179, 61, 0.14); border-color: rgba(242, 179, 61, 0.6); color: #f6c766; }
+      .big { font-size: 50px; margin: 12px 0 8px; }
+      .lead { font-size: 19px; margin: 0 auto 8px; color: #cfd8e6; line-height: 1.4; }
+      .tip { font-size: 15px; margin: 0 auto; color: var(--muted); line-height: 1.4; }
+      .tip b { color: #7fc8ff; }
+      .steps {
+        display: -webkit-flex; display: flex;
+        -webkit-justify-content: center; justify-content: center;
+        -webkit-flex-wrap: wrap; flex-wrap: wrap;
+        list-style: none; padding: 0; margin: 12px 0 0;
       }
-      .lead {
-        font-size: 21px;
-        max-width: 700px;
-        margin: 0 auto 10px;
-        color: #cfd8e6;
+      .steps li {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 8px 14px;
+        margin: 4px;
+        font-size: 15px;
+        font-weight: 600;
       }
-      .tip {
-        font-size: 16px;
-        color: var(--muted);
-        max-width: 640px;
-        margin: 0 auto 26px;
+      .steps li b {
+        display: inline-block;
+        width: 24px; height: 24px; line-height: 24px;
+        border-radius: 50%;
+        background: var(--ps);
+        color: #fff;
+        margin-right: 8px;
+        font-size: 13px;
       }
-      .tip b {
-        color: #7fc8ff;
-      }
-      .up {
-        -webkit-animation: up 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
-        animation: up 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
-      }
-      .d1 { -webkit-animation-delay: 0.95s; animation-delay: 0.95s; }
-      .d2 { -webkit-animation-delay: 1.1s; animation-delay: 1.1s; }
-      .d3 { -webkit-animation-delay: 1.25s; animation-delay: 1.25s; }
-      .d4 { -webkit-animation-delay: 1.4s; animation-delay: 1.4s; }
-      .d5 { -webkit-animation-delay: 1.6s; animation-delay: 1.6s; }
+      .up { -webkit-animation: up 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both; animation: up 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+      .d1 { -webkit-animation-delay: 1s; animation-delay: 1s; }
+      .d2 { -webkit-animation-delay: 1.15s; animation-delay: 1.15s; }
+      .d3 { -webkit-animation-delay: 1.3s; animation-delay: 1.3s; }
+      .d4 { -webkit-animation-delay: 1.45s; animation-delay: 1.45s; }
+      .qrcard.in { -webkit-animation: inLeft 0.8s 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both; animation: inLeft 0.8s 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+      .credit { position: fixed; left: 0; right: 0; bottom: 6px; text-align: center; font-size: 13px; color: #75839b; }
 
-      /* confete: so existe na tela de sucesso */
-      .confetti {
-        position: fixed;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-        pointer-events: none;
-        z-index: 5;
-      }
+      .confetti { position: fixed; left: 0; top: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none; z-index: 5; }
       .confetti i {
-        position: absolute;
-        top: -30px;
-        width: 12px;
-        height: 20px;
-        border-radius: 2px;
-        opacity: 0;
+        position: absolute; top: -30px; width: 12px; height: 20px; border-radius: 2px; opacity: 0;
         -webkit-animation: fall 3.4s cubic-bezier(0.3, 0.2, 0.6, 1) 2 both;
         animation: fall 3.4s cubic-bezier(0.3, 0.2, 0.6, 1) 2 both;
       }
@@ -279,103 +206,15 @@
       .confetti .cw { background: #ffffff; width: 8px; height: 14px; }
       .confetti .cd { background: var(--ps); border-radius: 50%; width: 12px; height: 12px; }
 
-      /* ================= FALHA ================= */
-      .err-mark {
-        position: relative;
-        width: 170px;
-        height: 170px;
-        margin-bottom: 26px;
-        -webkit-animation: up 0.6s both;
-        animation: up 0.6s both;
-      }
-      .err-mark img {
-        width: 170px;
-        height: 170px;
-        opacity: 0.55;
-      }
-      .err-mark b {
-        position: absolute;
-        right: 0;
-        bottom: 6px;
-        width: 54px;
-        height: 54px;
-        line-height: 54px;
-        border-radius: 50%;
-        background: var(--amber);
-        color: #1d1400;
-        font-size: 34px;
-        font-weight: 900;
-        box-shadow: 0 0 0 6px var(--bg);
-      }
-      .err-title {
-        font-size: 46px;
-        margin-bottom: 10px;
-      }
-      .err-sub {
-        font-size: 20px;
-        color: #cfd8e6;
-        max-width: 640px;
-        margin: 0 auto 22px;
-      }
-      .steps {
-        display: -webkit-flex;
-        display: flex;
-        -webkit-justify-content: center;
-        justify-content: center;
-        -webkit-flex-wrap: wrap;
-        flex-wrap: wrap;
-        list-style: none;
-        padding: 0;
-        margin: 0 0 28px;
-      }
-      .steps li {
-        background: var(--panel);
-        border: 1px solid var(--line);
-        border-radius: 14px;
-        padding: 12px 18px;
-        margin: 6px;
-        font-size: 17px;
-        font-weight: 600;
-      }
-      .steps li b {
-        display: inline-block;
-        width: 28px;
-        height: 28px;
-        line-height: 28px;
-        border-radius: 50%;
-        background: var(--ps);
-        color: #fff;
-        margin-right: 10px;
-        font-size: 15px;
-      }
-
       /* ================= ?log=1 (diagnostico) ================= */
-      #wrap {
-        padding: 0;
-      }
-      #state,
-      #out {
-        display: none;
-      }
-      body.log #wrap {
-        padding: 14px 18px;
-      }
-      body.log #state {
-        display: block;
-        font-size: 22px;
-        font-weight: 700;
-        margin: 0 0 8px;
-      }
+      #wrap { padding: 0; }
+      #state, #out { display: none; }
+      body.log #wrap { padding: 14px 18px; }
+      body.log #state { display: block; font-size: 22px; font-weight: 700; margin: 0 0 8px; }
       body.log #out {
-        display: block;
-        white-space: pre-wrap;
-        font: 12px/1.45 Consolas, monospace;
-        background: var(--panel);
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        padding: 10px 12px;
-        height: calc(100vh - 160px);
-        overflow-y: auto;
+        display: block; white-space: pre-wrap; font: 12px/1.45 Consolas, monospace;
+        background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+        padding: 10px 12px; height: calc(100vh - 160px); overflow-y: auto;
       }
       .ok, .safe { color: #7fd0a0; }
       .bad, .danger { color: #e0907f; }
@@ -385,38 +224,38 @@
       /* ================= keyframes ================= */
       @-webkit-keyframes spin { to { -webkit-transform: rotate(360deg); } }
       @keyframes spin { to { transform: rotate(360deg); } }
-      @-webkit-keyframes breathe { 50% { -webkit-transform: scale(0.94); opacity: 0.8; } }
-      @keyframes breathe { 50% { transform: scale(0.94); opacity: 0.8; } }
-      @-webkit-keyframes blink { 0%, 80%, 100% { opacity: 0.15; } 40% { opacity: 1; } }
-      @keyframes blink { 0%, 80%, 100% { opacity: 0.15; } 40% { opacity: 1; } }
-      @-webkit-keyframes slide { 0% { -webkit-transform: translateX(-100%); } 100% { -webkit-transform: translateX(250%); } }
-      @keyframes slide { 0% { transform: translateX(-100%); } 100% { transform: translateX(250%); } }
+      @-webkit-keyframes breathe { 50% { -webkit-transform: scale(0.95); opacity: 0.85; } }
+      @keyframes breathe { 50% { transform: scale(0.95); opacity: 0.85; } }
+      @-webkit-keyframes slide { 0% { -webkit-transform: translateX(-100%); } 100% { -webkit-transform: translateX(263%); } }
+      @keyframes slide { 0% { transform: translateX(-100%); } 100% { transform: translateX(263%); } }
       @-webkit-keyframes fadeIn { from { opacity: 0; } }
       @keyframes fadeIn { from { opacity: 0; } }
       @-webkit-keyframes pulse { 50% { -webkit-transform: scale(1.08); opacity: 0.75; } }
       @keyframes pulse { 50% { transform: scale(1.08); opacity: 0.75; } }
-      @-webkit-keyframes burst {
-        0% { -webkit-transform: scale(0.35); opacity: 0.95; }
-        100% { -webkit-transform: scale(2.3); opacity: 0; }
+      @-webkit-keyframes flash { 0% { opacity: 1; } 100% { opacity: 0; } }
+      @keyframes flash { 0% { opacity: 1; } 100% { opacity: 0; } }
+      @-webkit-keyframes land {
+        0% { -webkit-transform: translateX(-180px) scale(1.75); opacity: 0; }
+        30% { opacity: 1; }
+        100% { -webkit-transform: translateX(0) scale(1); }
       }
-      @keyframes burst {
-        0% { transform: scale(0.35); opacity: 0.95; }
-        100% { transform: scale(2.3); opacity: 0; }
+      @keyframes land {
+        0% { transform: translateX(-180px) scale(1.75); opacity: 0; }
+        30% { opacity: 1; }
+        100% { transform: translateX(0) scale(1); }
       }
-      @-webkit-keyframes pop {
-        0% { -webkit-transform: scale(0.3); opacity: 0; }
-        60% { -webkit-transform: scale(1.1); opacity: 1; }
-        100% { -webkit-transform: scale(1); opacity: 1; }
-      }
-      @keyframes pop {
-        0% { transform: scale(0.3); opacity: 0; }
-        60% { transform: scale(1.1); opacity: 1; }
-        100% { transform: scale(1); opacity: 1; }
-      }
+      @-webkit-keyframes shake { 20%, 60% { -webkit-transform: translateX(-9px); } 40%, 80% { -webkit-transform: translateX(9px); } }
+      @keyframes shake { 20%, 60% { transform: translateX(-9px); } 40%, 80% { transform: translateX(9px); } }
+      @-webkit-keyframes burst { 0% { -webkit-transform: scale(0.5); opacity: 0.95; } 100% { -webkit-transform: scale(2.4); opacity: 0; } }
+      @keyframes burst { 0% { transform: scale(0.5); opacity: 0.95; } 100% { transform: scale(2.4); opacity: 0; } }
+      @-webkit-keyframes pop { 0% { -webkit-transform: scale(0.3); opacity: 0; } 60% { -webkit-transform: scale(1.12); opacity: 1; } 100% { -webkit-transform: scale(1); opacity: 1; } }
+      @keyframes pop { 0% { transform: scale(0.3); opacity: 0; } 60% { transform: scale(1.12); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
       @-webkit-keyframes draw { to { stroke-dashoffset: 0; } }
       @keyframes draw { to { stroke-dashoffset: 0; } }
-      @-webkit-keyframes up { from { -webkit-transform: translateY(24px); opacity: 0; } }
-      @keyframes up { from { transform: translateY(24px); opacity: 0; } }
+      @-webkit-keyframes up { from { -webkit-transform: translateY(22px); opacity: 0; } }
+      @keyframes up { from { transform: translateY(22px); opacity: 0; } }
+      @-webkit-keyframes inLeft { from { -webkit-transform: translateX(-60px); opacity: 0; } }
+      @keyframes inLeft { from { transform: translateX(-60px); opacity: 0; } }
       @-webkit-keyframes fall {
         0% { -webkit-transform: translate3d(0, 0, 0) rotate(0deg); opacity: 1; }
         85% { opacity: 1; }
@@ -448,21 +287,17 @@
         100% { transform: translate3d(90px, 108vh, 0) rotate(720deg); opacity: 0; }
       }
 
-      @media (max-width: 640px) {
-        .orb { width: 190px; height: 190px; }
-        .orb img { width: 130px; height: 130px; margin: -65px 0 0 -65px; }
-        .run-title { font-size: 28px; }
-        .run-sub { font-size: 16px; }
-        .hero { width: 220px; height: 220px; }
-        .hero-logo { width: 170px; height: 170px; margin: -85px 0 0 -85px; }
-        .check { width: 56px; height: 56px; right: 8px; bottom: 12px; }
-        .check svg { width: 56px; height: 56px; }
-        .big { font-size: 40px; }
+      @media (max-width: 760px) {
+        .big-logo, .big-logo img { width: 200px; height: 200px; }
+        .big { font-size: 34px; }
+        .lead { font-size: 16px; }
+        @-webkit-keyframes land { 0% { -webkit-transform: translateY(-60px) scale(1.6); opacity: 0; } 100% { -webkit-transform: none; } }
+        @keyframes land { 0% { transform: translateY(-60px) scale(1.6); opacity: 0; } 100% { transform: none; } }
+      }
+      @media (max-height: 520px) {
+        .hero, .hero img.lg { width: 140px; height: 140px; }
+        .big { font-size: 42px; margin: 8px 0 6px; }
         .lead { font-size: 17px; }
-        .tip { font-size: 14px; }
-        .tag { font-size: 12px; letter-spacing: 0.14em; }
-        .err-title { font-size: 34px; }
-        .err-sub { font-size: 17px; }
       }
       @media (prefers-reduced-motion: reduce) {
         .confetti { display: none; }
@@ -473,68 +308,66 @@
     <header id="brand">
       <div class="brand-id">
         <img src="cabreira_logo.png" alt="" width="46" height="46" />
-        <div class="wordmark"><span class="c1">Cabreira</span><span class="c2">Store</span><small>Desbloqueio PS4</small></div>
-      </div>
-      <div class="wa-pill">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="#25d366" /><path fill="#fff" d="M7.5 6.5h9a2 2 0 0 1 2 2v5.5a2 2 0 0 1-2 2h-5l-3.5 3v-3h-.5a2 2 0 0 1-2-2V8.5a2 2 0 0 1 2-2z" /></svg>
-        <span>Suporte</span>(48) 98822-3759
+        <div class="wordmark"><span class="c1">Cabreira</span><span class="c2">Store</span></div>
       </div>
     </header>
 
-    <!-- rodando -->
-    <section class="stage" id="run">
-      <div class="orb">
-        <div class="ring r1"></div>
-        <div class="ring r2"></div>
+    <!-- rodando: so a logo grande e a barra -->
+    <section class="scene" id="run">
+      <div class="big-logo">
+        <div class="glow"></div>
         <img src="cabreira_logo.png" alt="Cabreira Store" />
       </div>
-      <h1 class="run-title">Desbloqueando seu PS4<span class="dots"><i>.</i><i>.</i><i>.</i></span></h1>
-      <p class="run-sub"><b>Não aperte nenhum botão</b> e não feche o navegador.<br />Em poucos segundos está tudo pronto.</p>
       <div class="bar"><i></i></div>
     </section>
 
     <!-- sucesso -->
-    <section class="stage" id="ok">
-      <div class="confetti" aria-hidden="true"><i class="cb" style="left:1.5%;-webkit-animation-delay:0.79s;animation-delay:0.79s;-webkit-animation-duration:2.98s;animation-duration:2.98s;-webkit-animation-name:fallL;animation-name:fallL"></i><i class="cg" style="left:4.3%;-webkit-animation-delay:0.71s;animation-delay:0.71s;-webkit-animation-duration:2.93s;animation-duration:2.93s;-webkit-animation-name:fallR;animation-name:fallR"></i><i class="cw" style="left:7.7%;-webkit-animation-delay:0.58s;animation-delay:0.58s;-webkit-animation-duration:3.26s;animation-duration:3.26s;-webkit-animation-name:fallR;animation-name:fallR"></i><i class="cd" style="left:10.8%;-webkit-animation-delay:0.11s;animation-delay:0.11s;-webkit-animation-duration:3.60s;animation-duration:3.60s;-webkit-animation-name:fallL;animation-name:fallL"></i><i class="cb" style="left:13.8%;-webkit-animation-delay:0.22s;animation-delay:0.22s;-webkit-animation-duration:3.70s;animation-duration:3.70s;-webkit-animation-name:fall;animation-name:fall"></i><i class="cg" style="left:15.2%;-webkit-animation-delay:0.07s;animation-delay:0.07s;-webkit-animation-duration:4.30s;animation-duration:4.30s;-webkit-animation-name:fallR;animation-name:fallR"></i><i class="cb" style="left:18.0%;-webkit-animation-delay:0.62s;animation-delay:0.62s;-webkit-animation-duration:4.33s;animation-duration:4.33s;-webkit-animation-name:fallL;animation-name:fallL"></i><i class="cg" style="left:21.8%;-webkit-animation-delay:0.77s;animation-delay:0.77s;-webkit-animation-duration:3.87s;animation-duration:3.87s;-webkit-animation-name:fallL;animation-name:fallL"></i><i class="cw" style="left:24.0%;-webkit-animation-delay:1.38s;animation-delay:1.38s;-webkit-animation-duration:3.51s;animation-duration:3.51s;-webkit-animation-name:fallL;animation-name:fallL"></i><i class="cd" style="left:28.1%;-webkit-animation-delay:0.46s;animation-delay:0.46s;-webkit-animation-duration:3.05s;animation-duration:3.05s;-webkit-animation-name:fallR;animation-name:fallR"></i><i class="cb" style="left:30.5%;-webkit-animation-delay:0.49s;animation-delay:0.49s;-webkit-animation-duration:2.93s;animation-duration:2.93s;-webkit-animation-name:fallR;animation-name:fallR"></i><i class="cg" style="left:33.1%;-webkit-animation-delay:1.24s;animation-delay:1.24s;-webkit-animation-duration:3.55s;animation-duration:3.55s;-webkit-animation-name:fallL;animation-name:fallL"></i><i class="cb" style="left:37.1%;-webkit-animation-delay:0.56s;animation-delay:0.56s;-webkit-animation-duration:4.01s;animation-duration:4.01s;-webkit-animation-name:fall;animation-name:fall"></i><i class="cg" style="left:38.6%;-webkit-animation-delay:0.31s;animation-delay:0.31s;-webkit-animation-duration:3.52s;animation-duration:3.52s;-webkit-animation-name:fallL;animation-name:fallL"></i><i class="cw" style="left:41.3%;-webkit-animation-delay:0.58s;animation-delay:0.58s;-webkit-animation-duration:3.89s;animation-duration:3.89s;-webkit-animation-name:fall;animation-name:fall"></i><i class="cd" style="left:47.0%;-webkit-animation-delay:0.45s;animation-delay:0.45s;-webkit-animation-duration:3.50s;animation-duration:3.50s;-webkit-animation-name:fall;animation-name:fall"></i><i class="cb" style="left:48.4%;-webkit-animation-delay:1.17s;animation-delay:1.17s;-webkit-animation-duration:3.52s;animation-duration:3.52s;-webkit-animation-name:fall;animation-name:fall"></i><i class="cg" style="left:50.8%;-webkit-animation-delay:0.33s;animation-delay:0.33s;-webkit-animation-duration:3.99s;animation-duration:3.99s;-webkit-animation-name:fallL;animation-name:fallL"></i><i class="cb" style="left:53.8%;-webkit-animation-delay:1.07s;animation-delay:1.07s;-webkit-animation-duration:4.17s;animation-duration:4.17s;-webkit-animation-name:fallR;animation-name:fallR"></i><i class="cg" style="left:58.7%;-webkit-animation-delay:1.20s;animation-delay:1.20s;-webkit-animation-duration:4.00s;animation-duration:4.00s;-webkit-animation-name:fall;animation-name:fall"></i><i class="cw" style="left:60.5%;-webkit-animation-delay:0.03s;animation-delay:0.03s;-webkit-animation-duration:3.32s;animation-duration:3.32s;-webkit-animation-name:fall;animation-name:fall"></i><i class="cd" style="left:62.4%;-webkit-animation-delay:0.55s;animation-delay:0.55s;-webkit-animation-duration:3.90s;animation-duration:3.90s;-webkit-animation-name:fallR;animation-name:fallR"></i><i class="cb" style="left:65.5%;-webkit-animation-delay:1.34s;animation-delay:1.34s;-webkit-animation-duration:2.81s;animation-duration:2.81s;-webkit-animation-name:fall;animation-name:fall"></i><i class="cg" style="left:69.4%;-webkit-animation-delay:0.62s;animation-delay:0.62s;-webkit-animation-duration:2.94s;animation-duration:2.94s;-webkit-animation-name:fallR;animation-name:fallR"></i><i class="cb" style="left:72.0%;-webkit-animation-delay:1.22s;animation-delay:1.22s;-webkit-animation-duration:3.74s;animation-duration:3.74s;-webkit-animation-name:fall;animation-name:fall"></i><i class="cg" style="left:73.9%;-webkit-animation-delay:1.11s;animation-delay:1.11s;-webkit-animation-duration:4.23s;animation-duration:4.23s;-webkit-animation-name:fallL;animation-name:fallL"></i><i class="cw" style="left:76.5%;-webkit-animation-delay:0.22s;animation-delay:0.22s;-webkit-animation-duration:3.93s;animation-duration:3.93s;-webkit-animation-name:fallR;animation-name:fallR"></i><i class="cd" style="left:81.4%;-webkit-animation-delay:1.22s;animation-delay:1.22s;-webkit-animation-duration:3.17s;animation-duration:3.17s;-webkit-animation-name:fallR;animation-name:fallR"></i><i class="cb" style="left:82.9%;-webkit-animation-delay:0.05s;animation-delay:0.05s;-webkit-animation-duration:2.93s;animation-duration:2.93s;-webkit-animation-name:fallL;animation-name:fallL"></i><i class="cg" style="left:86.9%;-webkit-animation-delay:1.16s;animation-delay:1.16s;-webkit-animation-duration:4.15s;animation-duration:4.15s;-webkit-animation-name:fallL;animation-name:fallL"></i><i class="cb" style="left:89.7%;-webkit-animation-delay:0.07s;animation-delay:0.07s;-webkit-animation-duration:3.25s;animation-duration:3.25s;-webkit-animation-name:fall;animation-name:fall"></i><i class="cg" style="left:91.4%;-webkit-animation-delay:0.50s;animation-delay:0.50s;-webkit-animation-duration:3.17s;animation-duration:3.17s;-webkit-animation-name:fallL;animation-name:fallL"></i><i class="cw" style="left:96.5%;-webkit-animation-delay:0.19s;animation-delay:0.19s;-webkit-animation-duration:3.06s;animation-duration:3.06s;-webkit-animation-name:fallL;animation-name:fallL"></i><i class="cd" style="left:98.9%;-webkit-animation-delay:0.12s;animation-delay:0.12s;-webkit-animation-duration:3.45s;animation-duration:3.45s;-webkit-animation-name:fallL;animation-name:fallL"></i></div>
-      <div class="hero">
-        <div class="halo"></div>
-        <div class="burst"></div>
-        <div class="burst b2"></div>
-        <div class="orbit"></div>
-        <img class="hero-logo" src="cabreira_logo.png" alt="Cabreira Store" />
-        <div class="check"><svg viewBox="0 0 52 52" aria-hidden="true"><path d="M15 27l7.5 7.5L38 19" /></svg></div>
+    <section class="scene row" id="ok">
+      <div class="flash"></div>
+      <div class="confetti" aria-hidden="true"><i class="cb" style="left:1.5%;-webkit-animation-name:fall;animation-name:fall;-webkit-animation-delay:1.19s;animation-delay:1.19s;-webkit-animation-duration:2.98s;animation-duration:2.98s"></i><i class="cg" style="left:4.3%;-webkit-animation-name:fallR;animation-name:fallR;-webkit-animation-delay:1.11s;animation-delay:1.11s;-webkit-animation-duration:2.93s;animation-duration:2.93s"></i><i class="cw" style="left:7.7%;-webkit-animation-name:fallR;animation-name:fallR;-webkit-animation-delay:0.98s;animation-delay:0.98s;-webkit-animation-duration:3.26s;animation-duration:3.26s"></i><i class="cd" style="left:10.8%;-webkit-animation-name:fall;animation-name:fall;-webkit-animation-delay:0.51s;animation-delay:0.51s;-webkit-animation-duration:3.60s;animation-duration:3.60s"></i><i class="cb" style="left:13.8%;-webkit-animation-name:fallL;animation-name:fallL;-webkit-animation-delay:0.62s;animation-delay:0.62s;-webkit-animation-duration:3.70s;animation-duration:3.70s"></i><i class="cg" style="left:15.2%;-webkit-animation-name:fallR;animation-name:fallR;-webkit-animation-delay:0.47s;animation-delay:0.47s;-webkit-animation-duration:4.30s;animation-duration:4.30s"></i><i class="cb" style="left:18.0%;-webkit-animation-name:fall;animation-name:fall;-webkit-animation-delay:1.02s;animation-delay:1.02s;-webkit-animation-duration:4.33s;animation-duration:4.33s"></i><i class="cg" style="left:21.8%;-webkit-animation-name:fall;animation-name:fall;-webkit-animation-delay:1.17s;animation-delay:1.17s;-webkit-animation-duration:3.87s;animation-duration:3.87s"></i><i class="cw" style="left:24.0%;-webkit-animation-name:fall;animation-name:fall;-webkit-animation-delay:1.78s;animation-delay:1.78s;-webkit-animation-duration:3.51s;animation-duration:3.51s"></i><i class="cd" style="left:28.1%;-webkit-animation-name:fallR;animation-name:fallR;-webkit-animation-delay:0.86s;animation-delay:0.86s;-webkit-animation-duration:3.05s;animation-duration:3.05s"></i><i class="cb" style="left:30.5%;-webkit-animation-name:fallR;animation-name:fallR;-webkit-animation-delay:0.89s;animation-delay:0.89s;-webkit-animation-duration:2.93s;animation-duration:2.93s"></i><i class="cg" style="left:33.1%;-webkit-animation-name:fall;animation-name:fall;-webkit-animation-delay:1.64s;animation-delay:1.64s;-webkit-animation-duration:3.55s;animation-duration:3.55s"></i><i class="cb" style="left:37.1%;-webkit-animation-name:fallL;animation-name:fallL;-webkit-animation-delay:0.96s;animation-delay:0.96s;-webkit-animation-duration:4.01s;animation-duration:4.01s"></i><i class="cg" style="left:38.6%;-webkit-animation-name:fall;animation-name:fall;-webkit-animation-delay:0.71s;animation-delay:0.71s;-webkit-animation-duration:3.52s;animation-duration:3.52s"></i><i class="cw" style="left:41.3%;-webkit-animation-name:fallL;animation-name:fallL;-webkit-animation-delay:0.98s;animation-delay:0.98s;-webkit-animation-duration:3.89s;animation-duration:3.89s"></i><i class="cd" style="left:47.0%;-webkit-animation-name:fallL;animation-name:fallL;-webkit-animation-delay:0.85s;animation-delay:0.85s;-webkit-animation-duration:3.50s;animation-duration:3.50s"></i><i class="cb" style="left:48.4%;-webkit-animation-name:fallL;animation-name:fallL;-webkit-animation-delay:1.57s;animation-delay:1.57s;-webkit-animation-duration:3.52s;animation-duration:3.52s"></i><i class="cg" style="left:50.8%;-webkit-animation-name:fall;animation-name:fall;-webkit-animation-delay:0.73s;animation-delay:0.73s;-webkit-animation-duration:3.99s;animation-duration:3.99s"></i><i class="cb" style="left:53.8%;-webkit-animation-name:fallR;animation-name:fallR;-webkit-animation-delay:1.47s;animation-delay:1.47s;-webkit-animation-duration:4.17s;animation-duration:4.17s"></i><i class="cg" style="left:58.7%;-webkit-animation-name:fallL;animation-name:fallL;-webkit-animation-delay:1.60s;animation-delay:1.60s;-webkit-animation-duration:4.00s;animation-duration:4.00s"></i><i class="cw" style="left:60.5%;-webkit-animation-name:fallL;animation-name:fallL;-webkit-animation-delay:0.43s;animation-delay:0.43s;-webkit-animation-duration:3.32s;animation-duration:3.32s"></i><i class="cd" style="left:62.4%;-webkit-animation-name:fallR;animation-name:fallR;-webkit-animation-delay:0.95s;animation-delay:0.95s;-webkit-animation-duration:3.90s;animation-duration:3.90s"></i><i class="cb" style="left:65.5%;-webkit-animation-name:fallL;animation-name:fallL;-webkit-animation-delay:1.74s;animation-delay:1.74s;-webkit-animation-duration:2.81s;animation-duration:2.81s"></i><i class="cg" style="left:69.4%;-webkit-animation-name:fallR;animation-name:fallR;-webkit-animation-delay:1.02s;animation-delay:1.02s;-webkit-animation-duration:2.94s;animation-duration:2.94s"></i><i class="cb" style="left:72.0%;-webkit-animation-name:fallL;animation-name:fallL;-webkit-animation-delay:1.62s;animation-delay:1.62s;-webkit-animation-duration:3.74s;animation-duration:3.74s"></i><i class="cg" style="left:73.9%;-webkit-animation-name:fall;animation-name:fall;-webkit-animation-delay:1.51s;animation-delay:1.51s;-webkit-animation-duration:4.23s;animation-duration:4.23s"></i><i class="cw" style="left:76.5%;-webkit-animation-name:fallR;animation-name:fallR;-webkit-animation-delay:0.62s;animation-delay:0.62s;-webkit-animation-duration:3.93s;animation-duration:3.93s"></i><i class="cd" style="left:81.4%;-webkit-animation-name:fallR;animation-name:fallR;-webkit-animation-delay:1.62s;animation-delay:1.62s;-webkit-animation-duration:3.17s;animation-duration:3.17s"></i><i class="cb" style="left:82.9%;-webkit-animation-name:fall;animation-name:fall;-webkit-animation-delay:0.45s;animation-delay:0.45s;-webkit-animation-duration:2.93s;animation-duration:2.93s"></i><i class="cg" style="left:86.9%;-webkit-animation-name:fall;animation-name:fall;-webkit-animation-delay:1.56s;animation-delay:1.56s;-webkit-animation-duration:4.15s;animation-duration:4.15s"></i><i class="cb" style="left:89.7%;-webkit-animation-name:fallL;animation-name:fallL;-webkit-animation-delay:0.47s;animation-delay:0.47s;-webkit-animation-duration:3.25s;animation-duration:3.25s"></i><i class="cg" style="left:91.4%;-webkit-animation-name:fall;animation-name:fall;-webkit-animation-delay:0.90s;animation-delay:0.90s;-webkit-animation-duration:3.17s;animation-duration:3.17s"></i><i class="cw" style="left:96.5%;-webkit-animation-name:fall;animation-name:fall;-webkit-animation-delay:0.59s;animation-delay:0.59s;-webkit-animation-duration:3.06s;animation-duration:3.06s"></i><i class="cd" style="left:98.9%;-webkit-animation-name:fall;animation-name:fall;-webkit-animation-delay:0.52s;animation-delay:0.52s;-webkit-animation-duration:3.45s;animation-duration:3.45s"></i></div>
+      <div class="qrcard in">
+        <img src="qr_whatsapp.svg" alt="QR code do WhatsApp" />
+        <div class="kicker">Suporte Cabreira Store</div>
+        <div class="num">(48) 98822-3759</div>
+        <p>Dúvidas? Aponte a câmera do celular e chame no WhatsApp.</p>
       </div>
-      <div class="tag up d1">Desbloqueio realizado com sucesso</div>
-      <h1 class="big up d2"><span class="grad">Console liberado!</span></h1>
-      <p class="lead up d3">O GoldHEN já está ativo no seu PS4. Pode pegar o controle: a jogatina agora é toda sua.</p>
-      <p class="tip up d4"><b>Dica:</b> se desligar ou reiniciar o console, o desbloqueio sai. É só abrir este mesmo link para ativar de novo.</p>
-      <div class="support up d5">
-        <img class="qr" src="qr_whatsapp.svg" alt="QR code do WhatsApp" />
-        <div>
-          <div class="kicker">Suporte Cabreira Store</div>
-          <div class="num">(48) 98822-3759</div>
-          <p>Ficou com alguma dúvida? Aponte a câmera do celular para o QR code e fale com a gente no WhatsApp.</p>
+      <div class="main">
+        <div class="hero">
+          <div class="halo"></div>
+          <div class="burst"></div>
+          <div class="burst b2"></div>
+          <img class="lg" src="cabreira_logo.png" alt="Cabreira Store" />
+          <div class="check"><svg viewBox="0 0 52 52" aria-hidden="true"><path d="M15 27l7.5 7.5L38 19" /></svg></div>
         </div>
+        <div class="tag up d1">Desbloqueio realizado com sucesso</div>
+        <h1 class="big up d2"><span class="grad">Console liberado!</span></h1>
+        <p class="lead up d3">O GoldHEN já está ativo no seu PS4. Pode pegar o controle: a jogatina agora é toda sua.</p>
+        <p class="tip up d4"><b>Dica:</b> se desligar ou reiniciar o console, o desbloqueio sai. É só abrir este mesmo link para ativar de novo.</p>
       </div>
     </section>
 
     <!-- falha -->
-    <section class="stage" id="err">
-      <div class="err-mark"><img src="cabreira_logo.png" alt="" /><b>!</b></div>
-      <h1 class="err-title">Não foi dessa vez</h1>
-      <p class="err-sub">O desbloqueio não completou. Isso é normal: às vezes leva mais de uma tentativa.</p>
-      <ol class="steps">
-        <li><b>1</b>Reinicie o console</li>
-        <li><b>2</b>Abra este link de novo</li>
-        <li><b>3</b>Aguarde sem apertar nada</li>
-      </ol>
-      <div class="support">
-        <img class="qr" src="qr_whatsapp.svg" alt="QR code do WhatsApp" />
-        <div>
-          <div class="kicker">Precisa de ajuda?</div>
-          <div class="num">(48) 98822-3759</div>
-          <p>Se continuar sem funcionar, aponte a câmera do celular para o QR code e chame a Cabreira Store no WhatsApp.</p>
+    <section class="scene row" id="err">
+      <div class="flash"></div>
+      <div class="qrcard in">
+        <img src="qr_whatsapp.svg" alt="QR code do WhatsApp" />
+        <div class="kicker">Precisa de ajuda?</div>
+        <div class="num">(48) 98822-3759</div>
+        <p>Aponte a câmera do celular e chame a Cabreira Store no WhatsApp.</p>
+      </div>
+      <div class="main">
+        <div class="hero">
+          <img class="lg" src="cabreira_logo.png" alt="Cabreira Store" />
+          <div class="warnmark">!</div>
         </div>
+        <div class="tag amber up d1">Desbloqueio não concluído</div>
+        <h1 class="big up d2">Não foi dessa vez</h1>
+        <p class="lead up d3">Isso é normal: às vezes leva mais de uma tentativa.</p>
+        <ol class="steps up d4">
+          <li><b>1</b>Reinicie o console</li>
+          <li><b>2</b>Abra este link de novo</li>
+          <li><b>3</b>Aguarde sem apertar nada</li>
+        </ol>
       </div>
     </section>
 
@@ -542,8 +375,6 @@
       <div id="state"></div>
       <div id="out"></div>
     </div>
-
-    <div class="foot"><b>Cabreira Store</b> · Exploit por raw13g · GoldHEN por SiSTR0</div>
 
     <script type="module">
       import "./jb.js?v=10";

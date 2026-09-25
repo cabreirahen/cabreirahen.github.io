@@ -5,66 +5,46 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Cabreira Store · Desbloqueio PS4</title>
 <link rel="stylesheet" href="cabreira.css">
+<link rel="stylesheet" href="layout-v2.css">
 <style>
-  .stage { display:-webkit-flex; display:flex; -webkit-flex-direction:column; flex-direction:column;
-           -webkit-align-items:center; align-items:center; -webkit-justify-content:center; justify-content:center;
-           text-align:center; min-height:calc(100vh - 150px); padding:24px 20px 8px; box-sizing:border-box; }
-  .mark { width:200px; height:200px; margin-bottom:18px;
+  .mark { width:150px; height:150px; margin-bottom:6px;
           -webkit-animation:up .7s cubic-bezier(.2,.8,.2,1) both; animation:up .7s cubic-bezier(.2,.8,.2,1) both; }
-  h1 { margin:0; font-size:52px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; line-height:1.05; }
+  h1 { margin:0; font-size:44px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; line-height:1.05; }
   h1 .c2 { color:var(--xb-bright); }
-  .sub { margin:10px 0 30px; color:var(--muted); font-size:19px; letter-spacing:.04em; }
-  .panel { background:var(--panel); border:1px solid var(--line); border-radius:18px;
-           padding:22px 34px; min-width:420px; max-width:90vw; box-sizing:border-box; margin-bottom:30px; }
-  #state { font-size:26px; font-weight:800; margin:0 0 6px; }
-  #det { font-size:16px; color:var(--muted); margin:0 0 4px; }
+  .sub { margin:6px 0 18px; color:var(--muted); font-size:17px; letter-spacing:.04em; }
+  .panel { background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:14px 24px; }
+  #state { font-size:22px; font-weight:800; margin:0 0 4px; }
+  #det { font-size:15px; color:var(--muted); margin:0 0 2px; }
   #det b { color:var(--text); font-weight:700; }
-  #cache { font-size:14px; color:#75839b; margin:0; min-height:18px; }
+  #cache { font-size:13px; color:#75839b; margin:0; min-height:16px; }
   #cache.cacheok { color:#7fd0a0; }
   .ok { color:#7fd0a0; } .bad { color:#ff8f7a; } .warn { color:#f2c763; }
+  .credit { position:fixed; left:0; right:0; bottom:6px; text-align:center; font-size:13px; color:#75839b; }
   @-webkit-keyframes up { from { -webkit-transform:translateY(24px); opacity:0; } }
   @keyframes up { from { transform:translateY(24px); opacity:0; } }
-  @media (max-width:640px) {
-    .mark { width:140px; height:140px; }
-    h1 { font-size:32px; }
-    .sub { font-size:15px; }
-    .panel { min-width:0; width:100%; padding:16px 18px; }
-    #state { font-size:20px; }
-  }
+  @media (max-width:760px) { h1 { font-size:30px; } .mark { width:110px; height:110px; } }
 </style>
 </head>
 <body>
-<header id="brand">
-  <div class="brand-id">
-    <img src="cabreira_logo.png" alt="" width="46" height="46">
-    <div class="wordmark"><span class="c1">Cabreira</span><span class="c2">Store</span><small>Desbloqueio PS4</small></div>
+<div class="row">
+  <div class="qrcard">
+    <img src="qr_whatsapp.svg" alt="QR code do WhatsApp">
+    <div class="kicker">Suporte Cabreira Store</div>
+    <div class="num">(48) 98822-3759</div>
+    <p>Aponte a câmera do celular para o QR code e chame no WhatsApp.</p>
   </div>
-  <div class="wa-pill">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="#25d366"/><path fill="#fff" d="M7.5 6.5h9a2 2 0 0 1 2 2v5.5a2 2 0 0 1-2 2h-5l-3.5 3v-3h-.5a2 2 0 0 1-2-2V8.5a2 2 0 0 1 2-2z"/></svg>
-    <span>Suporte</span>(48) 98822-3759
-  </div>
-</header>
-
-<section class="stage">
-  <img class="mark" src="cabreira_logo.png" alt="Cabreira Store">
-  <h1>Cabreira <span class="c2">Store</span></h1>
-  <p class="sub">Desbloqueio de PS4 · GoldHEN</p>
-  <div class="panel" id="wrap">
-    <div id="state">Verificando firmware...</div>
-    <div id="det"></div>
-    <div id="cache"></div>
-  </div>
-  <div class="support">
-    <img class="qr" src="qr_whatsapp.svg" alt="QR code do WhatsApp">
-    <div>
-      <div class="kicker">Suporte Cabreira Store</div>
-      <div class="num">(48) 98822-3759</div>
-      <p>Precisa de ajuda? Aponte a câmera do celular para o QR code e fale com a gente no WhatsApp.</p>
+  <div class="main">
+    <img class="mark" src="cabreira_logo.png" alt="Cabreira Store">
+    <h1>Cabreira <span class="c2">Store</span></h1>
+    <p class="sub">Desbloqueio de PS4 · GoldHEN</p>
+    <div class="panel" id="wrap">
+      <div id="state">Verificando firmware...</div>
+      <div id="det"></div>
+      <div id="cache"></div>
     </div>
   </div>
-</section>
-
-<div class="foot"><b>Cabreira Store</b> · Exploit por raw13g · GoldHEN por SiSTR0</div>
+</div>
+<div class="credit">Exploit por raw13g · GoldHEN por SiSTR0</div>
 
 <script>
 (function () {

@@ -1,0 +1,63 @@
+/* Cabreira Store v2: 2 colunas p/ a area baixa do navegador do PS4 */
+.qrcard {
+  -webkit-flex: none;
+  flex: none;
+  width: 250px;
+  text-align: center;
+  background: linear-gradient(160deg, rgba(0, 112, 209, 0.2), rgba(16, 124, 16, 0.2));
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 18px 16px 16px;
+  box-sizing: border-box;
+}
+.qrcard img {
+  display: block;
+  width: 190px;
+  height: 190px;
+  margin: 0 auto 12px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 8px;
+  box-sizing: border-box;
+}
+.qrcard .kicker {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--xb-bright);
+}
+.qrcard .num {
+  font-size: 25px;
+  font-weight: 800;
+  margin: 4px 0;
+  white-space: nowrap;
+}
+.qrcard p {
+  margin: 0;
+  color: #a3b0c4;
+  font-size: 13px;
+  line-height: 1.35;
+}
+.row {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding: 14px 40px;
+}
+.row .main {
+  -webkit-flex: 1;
+  flex: 1;
+  max-width: 720px;
+  margin-left: 44px;
+  text-align: center;
+}
+@media (max-width: 760px) {
+  .row { -webkit-flex-direction: column; flex-direction: column; padding: 16px; }
+  .row .main { margin: 18px 0 0; }
+}
