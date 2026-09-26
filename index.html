@@ -92,7 +92,7 @@
     // it, so a user-agent quirk on the real 13.52 console can never lock it out.
     if (!supported) {
         setState("FIRMWARE NÃO SUPORTADO", "bad");
-        waitForTap("Firmware " + (key || "desconhecido") + " não suportado. Pressione X para tentar mesmo assim", go);
+        waitForTap("Firmware " + (key || "desconhecido") + " não suportado. Pressione o botão de avançar (X ou O) para tentar mesmo assim", go);
         return;
     }
 
@@ -108,7 +108,7 @@
     } else if (ac.status === ac.UPDATEREADY) {
         try { ac.swapCache(); } catch (e) {}
         setCache("atualização baixada", true);
-        waitForTap("Atualização pronta! Pressione X para recarregar e iniciar",
+        waitForTap("Atualização pronta! Pressione o botão de avançar (X ou O) para recarregar e iniciar",
                    function () { location.reload(); });
     } else {
         setCache("verificando arquivos salvos...");
@@ -120,12 +120,12 @@
         }, false);
         ac.addEventListener("cached", function () {
             setCache("salvo para uso offline", true);
-            waitForTap("Tudo pronto! Pressione X para iniciar o desbloqueio", go);
+            waitForTap("Tudo pronto! Pressione o botão de avançar (X ou O) para desbloquear", go);
         }, false);
         ac.addEventListener("updateready", function () {
             try { ac.swapCache(); } catch (e) {}
             setCache("atualização baixada", true);
-            waitForTap("Atualização pronta! Pressione X para recarregar e iniciar",
+            waitForTap("Atualização pronta! Pressione o botão de avançar (X ou O) para recarregar e iniciar",
                        function () { location.reload(); });
         }, false);
         ac.addEventListener("noupdate", function () {
@@ -134,11 +134,11 @@
         }, false);
         ac.addEventListener("error", function () {
             setCache("não foi possível salvar offline");
-            waitForTap("Pressione X para iniciar mesmo assim", go);
+            waitForTap("Pressione o botão de avançar (X ou O) para iniciar mesmo assim", go);
         }, false);
         ac.addEventListener("obsolete", function () {
             setCache("cópia salva desatualizada");
-            waitForTap("Pressione X para iniciar", go);
+            waitForTap("Pressione o botão de avançar (X ou O) para iniciar", go);
         }, false);
     }
 })();
