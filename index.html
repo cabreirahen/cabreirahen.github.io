@@ -101,10 +101,10 @@
         go();
     } else if (!navigator.onLine) {
         setCache("sem internet: usando a cópia salva", true);
-        go();
+        waitForTap("Pressione o botão de avançar (X ou O) para iniciar", go);
     } else if (ac.status === ac.IDLE) {
         setCache("salvo no console", true);
-        go();
+        waitForTap("Tudo pronto! Pressione o botão de avançar (X ou O) para desbloquear", go);
     } else if (ac.status === ac.UPDATEREADY) {
         try { ac.swapCache(); } catch (e) {}
         setCache("atualização baixada", true);
@@ -130,7 +130,7 @@
         }, false);
         ac.addEventListener("noupdate", function () {
             setCache("salvo no console: funciona offline", true);
-            go();
+            waitForTap("Tudo pronto! Pressione o botão de avançar (X ou O) para desbloquear", go);
         }, false);
         ac.addEventListener("error", function () {
             setCache("não foi possível salvar offline");
